@@ -72,7 +72,7 @@
       <sc-for list="{{ lessons }}" as="l" hint-placeholder-count="2">
         <div style="background:#fff;border:1px solid #ECE5D8;border-radius:20px;padding:22px;display:flex;flex-direction:column;gap:14px;box-shadow:0 10px 30px -24px rgba(27,42,74,.5)">
           <div style="display:flex;align-items:center;gap:12px">
-            <div style="width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font:700 18px/1 Mulish;color:#fff;background:{{ l.barColor }}">{{ l.num }}</div>
+            <div style="width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font:700 18px/1 Mulish;color:#fff;background:{{ l.iconBg }}">{{ l.num }}</div>
             <div style="flex:1">
               <div style="font:700 19px/1.1 Mulish">{{ l.title }}</div>
               <div style="font:500 13.5px/1.3 Mulish;color:#6B7080">{{ l.subtitle }}</div>
@@ -83,8 +83,8 @@
           </div>
           <div style="font:600 12.5px/1 Mulish;color:#6B7080">{{ l.statusLabel }}</div>
           <div style="display:flex;gap:10px;margin-top:2px">
-            <button onClick="{{ l.start }}" style="flex:1;padding:12px;border:none;border-radius:12px;background:{{ l.barColor }};color:#fff;font:700 15px/1 Mulish;cursor:pointer;transition:filter .15s,transform .14s cubic-bezier(.23,1,.32,1)" style-hover="{{ hoverDarken }}">{{ l.btnLabel }}</button>
-            <button onClick="{{ l.flash }}" style="padding:12px 14px;border:1.5px solid #E5DFD3;border-radius:12px;background:#fff;color:#1B2A4A;font:700 15px/1 Mulish;cursor:pointer" style-hover="{{ hoverCard }}">Karten</button>
+            <button onClick="{{ l.flash }}" style="{{ l.flashStyle }}" style-hover="{{ l.flashHover }}">{{ l.flashLabel }}</button>
+            <button onClick="{{ l.start }}" style="{{ l.startStyle }}" style-hover="{{ l.startHover }}">{{ l.btnLabel }}</button>
           </div>
         </div>
       </sc-for>
@@ -94,9 +94,9 @@
       <div style="flex:0 0 auto;width:56px;height:56px;border-radius:16px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font:600 30px/1 'Cormorant Garamond',serif;color:#fff">⚡</div>
       <div style="flex:1;min-width:200px">
         <div style="font:600 22px/1.15 'Cormorant Garamond',serif;color:#fff;margin-bottom:4px">Grand test</div>
-        <div style="font:500 14px/1.4 Mulish;color:#D6DEF2">12 zufällige Fragen aus allen Lektionen. Schaffst du 70 %? Dann gibt's das Abzeichen « Polyglotte ».</div>
+        <div style="font:500 14px/1.4 Mulish;color:#D6DEF2">{{ testSub }}</div>
       </div>
-      <button onClick="{{ testStart }}" style="flex:0 0 auto;padding:13px 24px;border:none;border-radius:13px;background:#fff;color:#27406F;font:800 15px/1 Mulish;cursor:pointer" style-hover="{{ hoverCard }}">Test starten</button>
+      <button onClick="{{ testStart }}" style="{{ testStyle }}" style-hover="{{ testHover }}">{{ testLabel }}</button>
     </div>
 
     <h2 style="font:600 25px/1.3 'Cormorant Garamond',serif;margin:30px 0 14px">Abzeichen</h2>
@@ -291,7 +291,7 @@
 class Component extends DCLogic {
   state = {
     ready: false, screen: 'home',
-    progress: {}, badges: [], streakBest: 0,
+    progress: {}, badges: [], streakBest: 0, seen: [],
     session: null, result: null, flash: null
   };
 
@@ -300,6 +300,7 @@ class Component extends DCLogic {
       this.setState({
         progress: JSON.parse(localStorage.getItem('fr_progress') || '{}'),
         badges: JSON.parse(localStorage.getItem('fr_badges') || '[]'),
+        seen: JSON.parse(localStorage.getItem('fr_seen') || '[]'),
         streakBest: parseInt(localStorage.getItem('fr_streakBest') || '0', 10) || 0
       });
     } catch (e) {}
@@ -434,12 +435,23 @@ class Component extends DCLogic {
     this.setState({ screen: 'result', progress: prog, badges, streakBest, result: { pct, correct: ss.correctTotal, total, maxStreak: ss.maxStreak, newList, lessonId: ss.lessonId, isReview: ss.isReview } });
   }
 
+  markSeen(id) {
+    if (this.state.seen.includes(id)) return;
+    const seen = this.state.seen.concat(id);
+    try { localStorage.setItem('fr_seen', JSON.stringify(seen)); } catch (e) {}
+    this.setState({ seen });
+  }
   openFlash(id) {
     const lesson = this.lessons().find(l => l.id === id); if (!lesson) return;
     this.setState({ screen: 'flash', flash: { id, idx: 0, flipped: false, cards: lesson.vocab, title: lesson.title } });
+    if (lesson.vocab.length <= 1) this.markSeen(id);
   }
   flipCard() { const f = this.state.flash; f.flipped = !f.flipped; this.setState({ flash: f }); }
-  flashNav(d) { const f = this.state.flash; f.idx = (f.idx + d + f.cards.length) % f.cards.length; f.flipped = false; this.setState({ flash: f }); }
+  flashNav(d) {
+    const f = this.state.flash; f.idx = (f.idx + d + f.cards.length) % f.cards.length; f.flipped = false;
+    this.setState({ flash: f });
+    if (f.idx === f.cards.length - 1) this.markSeen(f.id);
+  }
 
   renderVals() {
     const S = this.state;
@@ -448,22 +460,52 @@ class Component extends DCLogic {
     const v = {
       ready: S.ready,
       isHome: S.screen === 'home', isLesson: S.screen === 'lesson', isResult: S.screen === 'result', isFlash: S.screen === 'flash',
-      hoverCard: HOVER_CARD, hoverDarken: HOVER_DARK, streakBest: S.streakBest,
-      testStart: () => this.startReview()
+      hoverCard: HOVER_CARD, hoverDarken: HOVER_DARK, streakBest: S.streakBest
     };
 
-    // HOME
-    v.lessons = this.lessons().map(l => {
+    // HOME — Gating: erst Karteikarten ansehen, dann Übung frei; Lektion N erst nach Abschluss von N-1
+    const LIST = this.lessons();
+    const isDone = (id) => !!(S.progress[id] && S.progress[id].done);
+    const DIS = 'flex:1;padding:12px;border:1.5px solid #E8E2D6;border-radius:12px;background:#F1EEE5;color:#9A9488;font:700 15px/1 Mulish;cursor:not-allowed';
+    const OUTL = 'flex:1;padding:12px;border:1.5px solid #E5DFD3;border-radius:12px;background:#fff;color:#1B2A4A;font:700 15px/1 Mulish;cursor:pointer;transition:transform .14s cubic-bezier(.23,1,.32,1)';
+    const PRIM = (c) => 'flex:1;padding:12px;border:none;border-radius:12px;background:' + c + ';color:#fff;font:700 15px/1 Mulish;cursor:pointer;transition:filter .15s,transform .14s cubic-bezier(.23,1,.32,1)';
+    const NOOP = () => {};
+    v.lessons = LIST.map((l, i) => {
       const p = S.progress[l.id]; const done = !!(p && p.done);
       const color = l.accent === 'red' ? '#C4453B' : '#2C4CA8';
+      const unlocked = i === 0 || isDone(LIST[i - 1].id);
+      const cardsSeen = S.seen.includes(l.id) || done;
+      const canQuiz = unlocked && cardsSeen;
+      let status;
+      if (!unlocked) status = 'Zuerst „' + LIST[i - 1].title + '" abschließen';
+      else if (done) status = 'Bestanden · ' + p.best + '%';
+      else if (cardsSeen) status = 'Karten erledigt · bereit für die Übung';
+      else status = 'Erst die Karteikarten ansehen';
       return {
-        num: l.num, title: l.title, subtitle: l.subtitle, barColor: color,
+        num: unlocked ? l.num : '🔒', title: l.title, subtitle: l.subtitle, barColor: color,
+        iconBg: unlocked ? color : '#C9C3B6',
         ringW: done ? (p.best + '%') : '0%',
-        statusLabel: done ? ('Bestanden · ' + p.best + '%') : 'Noch nicht begonnen',
-        btnLabel: done ? 'Wiederholen' : 'Starten',
-        start: () => this.startLesson(l.id), flash: () => this.openFlash(l.id)
+        statusLabel: status,
+        flashLabel: cardsSeen ? 'Karten ✓' : 'Karten',
+        btnLabel: done ? 'Wiederholen' : 'Übung',
+        flashStyle: !unlocked ? DIS : (cardsSeen ? OUTL : PRIM(color)),
+        startStyle: canQuiz ? PRIM(color) : DIS,
+        flashHover: !unlocked ? {} : (cardsSeen ? HOVER_CARD : HOVER_DARK),
+        startHover: canQuiz ? HOVER_DARK : {},
+        flash: unlocked ? (() => this.openFlash(l.id)) : NOOP,
+        start: canQuiz ? (() => this.startLesson(l.id)) : NOOP
       };
     });
+    const allDone = LIST.length > 0 && LIST.every(l => isDone(l.id));
+    v.testLabel = allDone ? 'Test starten' : 'Gesperrt 🔒';
+    v.testSub = allDone
+      ? '12 zufällige Fragen aus allen Lektionen. Schaffst du 70 %? Dann gibt\'s das Abzeichen « Polyglotte ».'
+      : 'Schließe zuerst alle Lektionen ab, dann schaltet sich der große Test frei.';
+    v.testStyle = allDone
+      ? 'flex:0 0 auto;padding:13px 24px;border:none;border-radius:13px;background:#fff;color:#27406F;font:800 15px/1 Mulish;cursor:pointer;transition:transform .14s cubic-bezier(.23,1,.32,1)'
+      : 'flex:0 0 auto;padding:13px 24px;border:none;border-radius:13px;background:rgba(255,255,255,.22);color:#EAEFFB;font:800 15px/1 Mulish;cursor:not-allowed';
+    v.testHover = allDone ? HOVER_CARD : {};
+    v.testStart = allDone ? (() => this.startReview()) : NOOP;
     v.badges = ((window.FRENCH && window.FRENCH.badges) || []).map(b => {
       const earned = S.badges.includes(b.id);
       return {
