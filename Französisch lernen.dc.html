@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#F7F4EE">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Mulish:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="frenchData.js"></script>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{background:#F7F4EE;font-family:'Mulish',system-ui,sans-serif;color:#1B2A4A;-webkit-font-smoothing:antialiased}
+    button{font-family:inherit}
+    input{font-family:inherit}
+    @keyframes pop{0%{transform:scale(.94)}60%{transform:scale(1.03)}100%{transform:scale(1)}}
+    @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+    @keyframes fadeUp{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:translateY(0)}}
+    :focus-visible{outline:3px solid #2C4CA8;outline-offset:2px;border-radius:4px}
+    button,[role="button"]{touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .14s cubic-bezier(.23,1,.32,1)}
+    button:active:not(:disabled),[role="button"]:active{transform:scale(.97)}
+    @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  </style>
+</helmet>
+
+<div style="min-height:100dvh;display:flex;flex-direction:column;align-items:center;padding:32px 20px 64px">
+<div style="width:100%;max-width:880px">
+
+  <!-- ===================== HOME ===================== -->
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+  <div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:26px">
+      <div style="display:flex;height:22px;border-radius:3px;overflow:hidden;box-shadow:0 1px 2px rgba(27,42,74,.15)">
+        <span style="width:10px;background:#2C4CA8"></span><span style="width:10px;background:#fff"></span><span style="width:10px;background:#C4453B"></span>
+      </div>
+      <span style="font:700 12px/1 Mulish;letter-spacing:.22em;text-transform:uppercase;color:#2C4CA8">Apprends le français · A1</span>
+    </div>
+
+    <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap;background:#fff;border:1px solid #ECE5D8;border-radius:24px;padding:26px 28px;box-shadow:0 18px 40px -28px rgba(27,42,74,.4)">
+      <div style="flex:0 0 auto;animation:floaty 4s ease-in-out infinite">
+        <svg width="118" height="118" viewBox="0 0 120 120" aria-hidden="true">
+          <polygon points="28,42 41,17 52,44" fill="#D9803F"/><polygon points="92,42 79,17 68,44" fill="#D9803F"/>
+          <polygon points="34,40 42,26 48,42" fill="#F4C9A0"/><polygon points="86,40 78,26 72,42" fill="#F4C9A0"/>
+          <ellipse cx="60" cy="73" rx="38" ry="35" fill="#EC9A5C"/>
+          <ellipse cx="60" cy="84" rx="27" ry="21" fill="#FBF3E8"/>
+          <ellipse cx="60" cy="34" rx="41" ry="17" fill="#27406F"/><circle cx="60" cy="20" r="4.5" fill="#27406F"/>
+          <circle cx="47" cy="71" r="4.6" fill="#2A2233"/><circle cx="73" cy="71" r="4.6" fill="#2A2233"/>
+          <circle cx="48.4" cy="69.6" r="1.4" fill="#fff"/><circle cx="74.4" cy="69.6" r="1.4" fill="#fff"/>
+          <ellipse cx="60" cy="80" rx="5" ry="3.6" fill="#2A2233"/>
+          <path d="M60 83 Q60 90 53 91 M60 83 Q60 90 67 91" stroke="#2A2233" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <circle cx="40" cy="82" r="5" fill="#F3B7A6" opacity=".6"/><circle cx="80" cy="82" r="5" fill="#F3B7A6" opacity=".6"/>
+        </svg>
+      </div>
+      <div style="flex:1;min-width:240px">
+        <h1 style="font:600 40px/1.05 'Cormorant Garamond',serif;letter-spacing:.5px;margin-bottom:8px">Bonjour ! On commence ?</h1>
+        <p style="font:500 16px/1.5 Mulish;color:#5B6175">Salut, ich bin <b style="color:#2C4CA8">Margot</b> 🦊. Wir lernen zusammen Französisch – ganz von vorne, Schritt für Schritt. Wähle eine Lektion und los geht's.</p>
+      </div>
+    </div>
+
+    <sc-if value="{{ ready }}" hint-placeholder-val="{{ true }}">
+    <div style="margin:30px 0 10px;display:flex;align-items:baseline;justify-content:space-between">
+      <h2 style="font:600 25px/1.3 'Cormorant Garamond',serif">Deine Lektionen</h2>
+      <span style="font:600 13px/1 Mulish;color:#6B7080">Längste Serie: {{ streakBest }} 🔥</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px">
+      <sc-for list="{{ lessons }}" as="l" hint-placeholder-count="2">
+        <div style="background:#fff;border:1px solid #ECE5D8;border-radius:20px;padding:22px;display:flex;flex-direction:column;gap:14px;box-shadow:0 10px 30px -24px rgba(27,42,74,.5)">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font:700 18px/1 Mulish;color:#fff;background:{{ l.barColor }}">{{ l.num }}</div>
+            <div style="flex:1">
+              <div style="font:700 19px/1.1 Mulish">{{ l.title }}</div>
+              <div style="font:500 13.5px/1.3 Mulish;color:#6B7080">{{ l.subtitle }}</div>
+            </div>
+          </div>
+          <div style="height:7px;border-radius:99px;background:#EFEBE0;overflow:hidden">
+            <div style="height:100%;border-radius:99px;background:{{ l.barColor }};width:{{ l.ringW }};transition:width .5s ease"></div>
+          </div>
+          <div style="font:600 12.5px/1 Mulish;color:#6B7080">{{ l.statusLabel }}</div>
+          <div style="display:flex;gap:10px;margin-top:2px">
+            <button onClick="{{ l.start }}" style="flex:1;padding:12px;border:none;border-radius:12px;background:{{ l.barColor }};color:#fff;font:700 15px/1 Mulish;cursor:pointer;transition:filter .15s,transform .14s cubic-bezier(.23,1,.32,1)" style-hover="{{ hoverDarken }}">{{ l.btnLabel }}</button>
+            <button onClick="{{ l.flash }}" style="padding:12px 14px;border:1.5px solid #E5DFD3;border-radius:12px;background:#fff;color:#1B2A4A;font:700 15px/1 Mulish;cursor:pointer" style-hover="{{ hoverCard }}">Karten</button>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="margin-top:24px;display:flex;gap:20px;align-items:center;flex-wrap:wrap;background:linear-gradient(135deg,#27406F,#3B5BC4);border-radius:22px;padding:24px 28px;box-shadow:0 18px 40px -26px rgba(27,42,74,.7)">
+      <div style="flex:0 0 auto;width:56px;height:56px;border-radius:16px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font:600 30px/1 'Cormorant Garamond',serif;color:#fff">⚡</div>
+      <div style="flex:1;min-width:200px">
+        <div style="font:600 22px/1.15 'Cormorant Garamond',serif;color:#fff;margin-bottom:4px">Grand test</div>
+        <div style="font:500 14px/1.4 Mulish;color:#D6DEF2">12 zufällige Fragen aus allen Lektionen. Schaffst du 70 %? Dann gibt's das Abzeichen « Polyglotte ».</div>
+      </div>
+      <button onClick="{{ testStart }}" style="flex:0 0 auto;padding:13px 24px;border:none;border-radius:13px;background:#fff;color:#27406F;font:800 15px/1 Mulish;cursor:pointer" style-hover="{{ hoverCard }}">Test starten</button>
+    </div>
+
+    <h2 style="font:600 25px/1.3 'Cormorant Garamond',serif;margin:30px 0 14px">Abzeichen</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px">
+      <sc-for list="{{ badges }}" as="b" hint-placeholder-count="4">
+        <div style="{{ b.style }}">
+          <div style="width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:0 0 auto;background:{{ b.iconBg }};color:{{ b.iconColor }};font:700 16px/1 Mulish">{{ b.mark }}</div>
+          <div>
+            <div style="font:800 14px/1.1 Mulish;color:{{ b.titleColor }}">{{ b.title }}</div>
+            <div style="font:500 12px/1.25 Mulish;color:#6B7080;margin-top:2px">{{ b.de }}</div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <!-- ===================== LESSON ===================== -->
+  <sc-if value="{{ isLesson }}" hint-placeholder-val="{{ false }}">
+  <div>
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:22px">
+      <button onClick="{{ exit }}" aria-label="Lektion verlassen" style="border:none;background:#fff;border:1px solid #E5DFD3;width:44px;height:44px;border-radius:12px;font:600 20px/1 Mulish;color:#6B7080;cursor:pointer;flex:0 0 auto" style-hover="{{ hoverCard }}">×</button>
+      <div style="flex:1;height:11px;border-radius:99px;background:#EAE5D9;overflow:hidden">
+        <div style="height:100%;border-radius:99px;background:linear-gradient(90deg,#2C4CA8,#3B5BC4);width:{{ progressW }};transition:width .4s ease"></div>
+      </div>
+      <div style="flex:0 0 auto;display:flex;align-items:center;gap:6px;padding:7px 13px;border-radius:99px;background:{{ streakBg }};font:800 14px/1 Mulish;color:{{ streakColor }}">
+        <span>🔥</span><span>{{ streakNow }}</span>
+      </div>
+    </div>
+
+    <div style="background:#fff;border:1px solid #ECE5D8;border-radius:24px;padding:30px 28px;box-shadow:0 18px 44px -30px rgba(27,42,74,.45);animation:pop .3s ease">
+      <div style="font:700 12px/1 Mulish;letter-spacing:.18em;text-transform:uppercase;color:#7C734F;margin-bottom:16px">{{ qLabel }}</div>
+
+      <!-- audio prompt -->
+      <sc-if value="{{ q.hasAudio }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;justify-content:center;margin:6px 0 20px">
+          <button onClick="{{ q.playAudio }}" style="display:flex;align-items:center;gap:12px;padding:16px 26px;border:none;border-radius:18px;background:#EEF2FC;color:#2C4CA8;font:800 17px/1 Mulish;cursor:pointer" style-hover="{{ hoverCard }}">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="#2C4CA8"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M16 8.5a4 4 0 010 7" stroke="#2C4CA8" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M18.5 6a7 7 0 010 12" stroke="#2C4CA8" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+            Anhören
+          </button>
+        </div>
+      </sc-if>
+
+      <!-- image prompt (digit) -->
+      <sc-if value="{{ q.hasImage }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;justify-content:center;margin:2px 0 18px">
+          <div style="width:104px;height:104px;border-radius:22px;display:flex;align-items:center;justify-content:center;font:600 56px/1 'Cormorant Garamond',serif;color:#C4453B;background:#FBF0EE;border:2px solid #F2D9D4">{{ q.image }}</div>
+        </div>
+      </sc-if>
+
+      <h2 id="q-prompt" style="font:600 27px/1.25 'Cormorant Garamond',serif;text-align:center;margin-bottom:4px">{{ q.prompt }}</h2>
+      <sc-if value="{{ q.hasSub }}" hint-placeholder-val="{{ false }}">
+        <p style="text-align:center;font:500 14px/1.3 Mulish;color:#6B7080;margin-bottom:6px">{{ q.sub }}</p>
+      </sc-if>
+      <sc-if value="{{ q.hasSpeak }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;justify-content:center;margin:8px 0 2px">
+          <button onClick="{{ q.playSpeak }}" style="display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:7px 18px;border:1.5px solid #E5DFD3;border-radius:99px;background:#fff;color:#6E7488;font:700 13px/1 Mulish;cursor:pointer" style-hover="{{ hoverCard }}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#6E7488"><path d="M4 9v6h4l5 5V4L8 9H4z"/></svg>Aussprache
+          </button>
+        </div>
+      </sc-if>
+
+      <!-- MC -->
+      <sc-if value="{{ q.isMC }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:12px;margin-top:22px">
+          <sc-for list="{{ q.options }}" as="opt" hint-placeholder-count="4">
+            <button onClick="{{ opt.onClick }}" style="{{ opt.style }}" style-hover="{{ opt.hover }}">
+              <span>{{ opt.text }}</span>
+              <span style="font-weight:800">{{ opt.mark }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <!-- TYPE -->
+      <sc-if value="{{ q.isType }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:22px;display:flex;flex-direction:column;gap:12px">
+          <input value="{{ q.input }}" onInput="{{ q.onType }}" onKeyDown="{{ q.onKey }}" disabled="{{ q.locked }}" placeholder="Hier tippen…" aria-labelledby="q-prompt" lang="fr" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" style="{{ q.inputStyle }}">
+          <sc-if value="{{ q.showHint }}" hint-placeholder-val="{{ false }}">
+            <div style="font:500 13px/1.3 Mulish;color:#6B7080;padding-left:4px">💡 {{ q.hint }}</div>
+          </sc-if>
+          <sc-if value="{{ q.showSubmit }}" hint-placeholder-val="{{ true }}">
+            <button onClick="{{ q.submit }}" style="padding:14px;border:none;border-radius:14px;background:#2C4CA8;color:#fff;font:800 16px/1 Mulish;cursor:pointer" style-hover="{{ hoverDarken }}">Prüfen</button>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <!-- MEMORY -->
+      <sc-if value="{{ q.isMemory }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:22px">
+          <sc-for list="{{ q.tiles }}" as="t" hint-placeholder-count="8">
+            <button onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+
+    <!-- feedback -->
+    <sc-if value="{{ q.showFeedback }}" hint-placeholder-val="{{ false }}">
+      <div style="{{ q.fbStyle }}" role="status" aria-live="polite">
+        <div style="flex:1">
+          <div style="font:800 17px/1.1 Mulish;color:{{ q.fbColor }}">{{ q.fbTitle }}</div>
+          <sc-if value="{{ q.hasFbText }}" hint-placeholder-val="{{ false }}">
+            <div style="font:600 14px/1.3 Mulish;color:{{ q.fbColor }};opacity:.85;margin-top:3px">{{ q.fbText }}</div>
+          </sc-if>
+        </div>
+        <button onClick="{{ q.next }}" style="padding:13px 26px;border:none;border-radius:13px;background:{{ q.fbColor }};color:#fff;font:800 15px/1 Mulish;cursor:pointer;flex:0 0 auto">{{ q.nextLabel }}</button>
+      </div>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <!-- ===================== RESULT ===================== -->
+  <sc-if value="{{ isResult }}" hint-placeholder-val="{{ false }}">
+  <div style="animation:fadeUp .4s ease both;text-align:center;padding-top:10px">
+    <div style="display:flex;justify-content:center;margin-bottom:6px;animation:pop .5s ease">
+      <svg width="130" height="130" viewBox="0 0 120 120" aria-hidden="true">
+        <polygon points="28,42 41,17 52,44" fill="#D9803F"/><polygon points="92,42 79,17 68,44" fill="#D9803F"/>
+        <ellipse cx="60" cy="73" rx="38" ry="35" fill="#EC9A5C"/>
+        <ellipse cx="60" cy="84" rx="27" ry="21" fill="#FBF3E8"/>
+        <ellipse cx="60" cy="34" rx="41" ry="17" fill="#27406F"/><circle cx="60" cy="20" r="4.5" fill="#27406F"/>
+        <path d="M42 70 Q47 64 52 70" stroke="#2A2233" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M68 70 Q73 64 78 70" stroke="#2A2233" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <ellipse cx="60" cy="80" rx="5" ry="3.6" fill="#2A2233"/>
+        <path d="M50 86 Q60 96 70 86" stroke="#2A2233" stroke-width="2.5" fill="#fff" stroke-linecap="round"/>
+        <circle cx="40" cy="82" r="5.5" fill="#F3B7A6" opacity=".7"/><circle cx="80" cy="82" r="5.5" fill="#F3B7A6" opacity=".7"/>
+      </svg>
+    </div>
+    <div style="font:700 13px/1 Mulish;letter-spacing:.2em;text-transform:uppercase;color:#C4453B;margin-bottom:8px">{{ result.tag }}</div>
+    <h1 style="font:600 46px/1 'Cormorant Garamond',serif;margin-bottom:10px">{{ result.message }}</h1>
+    <p style="font:500 17px/1.5 Mulish;color:#5B6175;max-width:440px;margin:0 auto 26px">{{ result.sub }}</p>
+
+    <div style="display:inline-flex;gap:30px;background:#fff;border:1px solid #ECE5D8;border-radius:20px;padding:22px 38px;box-shadow:0 14px 36px -28px rgba(27,42,74,.5);margin-bottom:24px">
+      <div><div style="font:600 38px/1 'Cormorant Garamond',serif;color:#2C4CA8">{{ result.pct }}</div><div style="font:600 12px/1 Mulish;color:#6B7080;margin-top:4px">Quote</div></div>
+      <div style="width:1px;background:#ECE5D8"></div>
+      <div><div style="font:600 38px/1 'Cormorant Garamond',serif">{{ result.score }}</div><div style="font:600 12px/1 Mulish;color:#6B7080;margin-top:4px">Richtig</div></div>
+      <div style="width:1px;background:#ECE5D8"></div>
+      <div><div style="font:600 38px/1 'Cormorant Garamond',serif;color:#C4453B">{{ result.maxStreak }}</div><div style="font:600 12px/1 Mulish;color:#6B7080;margin-top:4px">Beste Serie</div></div>
+    </div>
+
+    <sc-if value="{{ result.hasNew }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-bottom:24px">
+        <div style="font:700 12px/1 Mulish;letter-spacing:.14em;text-transform:uppercase;color:#C9A227;margin-bottom:12px">Neu freigeschaltet</div>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+          <sc-for list="{{ result.newBadges }}" as="b" hint-placeholder-count="1">
+            <div style="display:flex;align-items:center;gap:10px;background:#FCF6E4;border:1.5px solid #EAD89A;border-radius:14px;padding:11px 16px;animation:pop .4s ease both">
+              <div style="width:34px;height:34px;border-radius:50%;background:#C9A227;color:#fff;display:flex;align-items:center;justify-content:center;font:700 15px/1 Mulish">★</div>
+              <div style="text-align:left"><div style="font:800 14px/1.1 Mulish">{{ b.title }}</div><div style="font:500 12px/1.2 Mulish;color:#6E6234">{{ b.de }}</div></div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <div style="display:flex;gap:12px;justify-content:center">
+      <button onClick="{{ result.retry }}" style="padding:14px 28px;border:1.5px solid #E5DFD3;border-radius:14px;background:#fff;color:#1B2A4A;font:800 15px/1 Mulish;cursor:pointer" style-hover="{{ hoverCard }}">Nochmal üben</button>
+      <button onClick="{{ result.home }}" style="padding:14px 28px;border:none;border-radius:14px;background:#2C4CA8;color:#fff;font:800 15px/1 Mulish;cursor:pointer" style-hover="{{ hoverDarken }}">Zur Übersicht</button>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ===================== FLASHCARDS ===================== -->
+  <sc-if value="{{ isFlash }}" hint-placeholder-val="{{ false }}">
+  <div style="animation:fadeUp .35s ease both">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:22px">
+      <button onClick="{{ flash.home }}" aria-label="Zurück zur Übersicht" style="border:1px solid #E5DFD3;background:#fff;width:44px;height:44px;border-radius:12px;font:600 20px/1 Mulish;color:#6B7080;cursor:pointer" style-hover="{{ hoverCard }}">←</button>
+      <div><div style="font:700 18px/1.1 Mulish">{{ flash.title }}</div><div style="font:600 12px/1 Mulish;color:#6B7080">Karteikarten · {{ flash.idx }} / {{ flash.total }}</div></div>
+    </div>
+
+    <div onClick="{{ flash.flip }}" onKeyDown="{{ flash.onKey }}" role="button" tabindex="0" aria-label="Karte umdrehen" style="position:relative;min-height:300px;border-radius:24px;cursor:pointer;background:#fff;border:1px solid #ECE5D8;box-shadow:0 18px 44px -30px rgba(27,42,74,.45);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:48px 28px 44px;animation:pop .3s ease">
+      <div style="position:absolute;top:18px;left:0;right:0;display:flex;justify-content:center"><div style="display:flex;height:6px;border-radius:3px;overflow:hidden"><span style="width:14px;background:#2C4CA8"></span><span style="width:14px;background:#E5DFD3"></span><span style="width:14px;background:#C4453B"></span></div></div>
+      <div style="font:600 12px/1 Mulish;letter-spacing:.16em;text-transform:uppercase;color:#7C734F">{{ flash.faceLabel }}</div>
+      <div lang="{{ flash.faceLang }}" style="font:600 40px/1.2 'Cormorant Garamond',serif;color:{{ flash.faceColor }};text-wrap:balance">{{ flash.face }}</div>
+      <button onClick="{{ flash.speak }}" style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border:1.5px solid #E5DFD3;border-radius:99px;background:#fff;color:#6E7488;font:700 13px/1 Mulish;cursor:pointer">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#6E7488"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M16 8.5a4 4 0 010 7" stroke="#6E7488" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>Anhören
+      </button>
+      <div style="position:absolute;bottom:16px;font:500 12px/1 Mulish;color:#7C734F">Tippen zum Umdrehen</div>
+    </div>
+
+    <div style="display:flex;gap:12px;margin-top:18px">
+      <button onClick="{{ flash.prev }}" style="flex:1;padding:14px;border:1.5px solid #E5DFD3;border-radius:14px;background:#fff;color:#1B2A4A;font:800 15px/1 Mulish;cursor:pointer" style-hover="{{ hoverCard }}">Zurück</button>
+      <button onClick="{{ flash.next }}" style="flex:1;padding:14px;border:none;border-radius:14px;background:#2C4CA8;color:#fff;font:800 15px/1 Mulish;cursor:pointer" style-hover="{{ hoverDarken }}">Nächste</button>
+    </div>
+  </div>
+  </sc-if>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:860},&quot;soundEffects&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;autoPlayAudio&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;showHints&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = {
+    ready: false, screen: 'home',
+    progress: {}, badges: [], streakBest: 0,
+    session: null, result: null, flash: null
+  };
+
+  componentDidMount() {
+    try {
+      this.setState({
+        progress: JSON.parse(localStorage.getItem('fr_progress') || '{}'),
+        badges: JSON.parse(localStorage.getItem('fr_badges') || '[]'),
+        streakBest: parseInt(localStorage.getItem('fr_streakBest') || '0', 10) || 0
+      });
+    } catch (e) {}
+    const tick = () => {
+      if (window.FRENCH) this.setState({ ready: true });
+      else setTimeout(tick, 60);
+    };
+    tick();
+    try { speechSynthesis.getVoices(); } catch (e) {}
+  }
+
+  lessons() { return (window.FRENCH && window.FRENCH.lessons) || []; }
+  norm(s) { return (s || '').toString().trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+  shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+  praise() { const p = ['Bravo !', 'Parfait !', 'Très bien !', 'Excellent !', 'Génial !', 'Magnifique !']; return p[Math.floor(Math.random() * p.length)]; }
+
+  // ---- sound ----
+  actx() { try { if (!this._ac) this._ac = new (window.AudioContext || window.webkitAudioContext)(); return this._ac; } catch (e) { return null; } }
+  tone(f, t0, dur, type, vol) {
+    const ac = this.actx(); if (!ac) return;
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.type = type || 'sine'; o.frequency.value = f;
+    o.connect(g); g.connect(ac.destination);
+    const t = ac.currentTime + t0;
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol || .12, t + .02);
+    g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    o.start(t); o.stop(t + dur + .02);
+  }
+  ding() { if (this.props.soundEffects === false) return; this.tone(660, 0, .12, 'sine', .12); this.tone(880, .09, .16, 'sine', .12); }
+  buzz() { if (this.props.soundEffects === false) return; this.tone(180, 0, .18, 'square', .07); }
+  speak(text) {
+    if (!text) return;
+    try {
+      const u = new SpeechSynthesisUtterance(text.replace(/…/g, ''));
+      u.lang = 'fr-FR'; u.rate = .88;
+      const v = speechSynthesis.getVoices().find(x => x.lang && x.lang.toLowerCase().startsWith('fr'));
+      if (v) u.voice = v;
+      speechSynthesis.cancel(); speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+
+  // ---- session ----
+  buildQs(list) {
+    return list.map(q => {
+      const it = Object.assign({}, q, { locked: false, correct: null, selected: null, input: '' });
+      if (q.kind === 'mc') it.order = this.shuffle(q.choices.slice());
+      if (q.kind === 'memory') {
+        const tiles = [];
+        q.pairs.forEach((p, i) => { tiles.push({ k: i, side: 'a', label: p[0] }); tiles.push({ k: i, side: 'b', label: p[1] }); });
+        it.tiles = this.shuffle(tiles).map((t, idx) => Object.assign(t, { idx, matched: false, sel: false }));
+        it.firstSel = null; it.matchedCount = 0;
+      }
+      return it;
+    });
+  }
+  startLesson(id) {
+    const lesson = this.lessons().find(l => l.id === id); if (!lesson) return;
+    const session = { lessonId: id, isReview: false, qs: this.buildQs(lesson.questions), qIndex: 0, streak: 0, maxStreak: 0, correctTotal: 0 };
+    this.setState({ screen: 'lesson', session }, () => this.autoPlay());
+  }
+  startReview() {
+    const all = [];
+    this.lessons().forEach(l => l.questions.forEach(q => { if (q.kind !== 'memory') all.push(q); }));
+    if (!all.length) return;
+    const picked = this.shuffle(all.slice()).slice(0, 12);
+    const session = { lessonId: 'review', isReview: true, qs: this.buildQs(picked), qIndex: 0, streak: 0, maxStreak: 0, correctTotal: 0 };
+    this.setState({ screen: 'lesson', session }, () => this.autoPlay());
+  }
+  autoPlay() {
+    if (this.props.autoPlayAudio === false) return;
+    const ss = this.state.session; if (!ss) return;
+    const q = ss.qs[ss.qIndex];
+    if (q && q.audio) setTimeout(() => this.speak(q.audio), 250);
+  }
+
+  answerMC(choice) {
+    const ss = this.state.session; const q = ss.qs[ss.qIndex]; if (q.locked) return;
+    q.selected = choice; q.locked = true; q.correct = (choice === q.answer);
+    if (q.correct) { ss.streak++; ss.maxStreak = Math.max(ss.maxStreak, ss.streak); ss.correctTotal++; this.ding(); }
+    else { ss.streak = 0; this.buzz(); }
+    this.setState({ session: ss });
+  }
+  setInput(v) { const ss = this.state.session; ss.qs[ss.qIndex].input = v; this.setState({ session: ss }); }
+  submitType() {
+    const ss = this.state.session; const q = ss.qs[ss.qIndex]; if (q.locked) return;
+    const n = this.norm(q.input); if (!n) return;
+    const ok = (q.accept || [q.answer]).some(a => this.norm(a) === n);
+    q.locked = true; q.correct = ok;
+    if (ok) { ss.streak++; ss.maxStreak = Math.max(ss.maxStreak, ss.streak); ss.correctTotal++; this.ding(); }
+    else { ss.streak = 0; this.buzz(); }
+    this.setState({ session: ss });
+  }
+  selectTile(idx) {
+    const ss = this.state.session; const q = ss.qs[ss.qIndex]; const t = q.tiles[idx];
+    if (q.locked || t.matched || t.sel) return;
+    if (q.firstSel == null) { t.sel = true; q.firstSel = idx; this.setState({ session: ss }); return; }
+    const f = q.tiles[q.firstSel]; t.sel = true;
+    if (f.k === t.k && f.side !== t.side) {
+      f.matched = true; t.matched = true; f.sel = false; t.sel = false; q.matchedCount++; q.firstSel = null; this.ding();
+      if (q.matchedCount === q.pairs.length) { q.locked = true; q.correct = true; ss.streak++; ss.maxStreak = Math.max(ss.maxStreak, ss.streak); ss.correctTotal++; }
+      this.setState({ session: ss });
+    } else {
+      this.buzz(); const fi = q.firstSel, ti = idx; q.firstSel = null; this.setState({ session: ss });
+      setTimeout(() => { const s2 = this.state.session; if (!s2) return; const qq = s2.qs[s2.qIndex]; if (qq.tiles[fi]) qq.tiles[fi].sel = false; if (qq.tiles[ti]) qq.tiles[ti].sel = false; this.setState({ session: s2 }); }, 650);
+    }
+  }
+  next() {
+    const ss = this.state.session;
+    if (ss.qIndex < ss.qs.length - 1) { ss.qIndex++; this.setState({ session: ss }, () => this.autoPlay()); }
+    else this.finishLesson();
+  }
+  finishLesson() {
+    const ss = this.state.session; const total = ss.qs.length;
+    const pct = Math.round(ss.correctTotal / total * 100);
+    const prog = Object.assign({}, this.state.progress);
+    prog[ss.lessonId] = { done: true, best: Math.max(pct, (prog[ss.lessonId] && prog[ss.lessonId].best) || 0) };
+    const set = new Set(this.state.badges);
+    if (ss.isReview) { if (pct >= 70) set.add('review'); }
+    else set.add(ss.lessonId);
+    if (pct === 100) set.add('perfect');
+    if (ss.maxStreak >= 5) set.add('streak');
+    const badges = [...set];
+    const newBadges = badges.filter(b => !this.state.badges.includes(b));
+    const streakBest = Math.max(this.state.streakBest, ss.maxStreak);
+    try {
+      localStorage.setItem('fr_progress', JSON.stringify(prog));
+      localStorage.setItem('fr_badges', JSON.stringify(badges));
+      localStorage.setItem('fr_streakBest', String(streakBest));
+    } catch (e) {}
+    const defs = (window.FRENCH && window.FRENCH.badges) || [];
+    const newList = newBadges.map(id => defs.find(d => d.id === id)).filter(Boolean);
+    this.setState({ screen: 'result', progress: prog, badges, streakBest, result: { pct, correct: ss.correctTotal, total, maxStreak: ss.maxStreak, newList, lessonId: ss.lessonId, isReview: ss.isReview } });
+  }
+
+  openFlash(id) {
+    const lesson = this.lessons().find(l => l.id === id); if (!lesson) return;
+    this.setState({ screen: 'flash', flash: { id, idx: 0, flipped: false, cards: lesson.vocab, title: lesson.title } });
+  }
+  flipCard() { const f = this.state.flash; f.flipped = !f.flipped; this.setState({ flash: f }); }
+  flashNav(d) { const f = this.state.flash; f.idx = (f.idx + d + f.cards.length) % f.cards.length; f.flipped = false; this.setState({ flash: f }); }
+
+  renderVals() {
+    const S = this.state;
+    const HOVER_CARD = { borderColor: '#2C4CA8', background: '#F4F6FC' };
+    const HOVER_DARK = { filter: 'brightness(.92)' };
+    const v = {
+      ready: S.ready,
+      isHome: S.screen === 'home', isLesson: S.screen === 'lesson', isResult: S.screen === 'result', isFlash: S.screen === 'flash',
+      hoverCard: HOVER_CARD, hoverDarken: HOVER_DARK, streakBest: S.streakBest,
+      testStart: () => this.startReview()
+    };
+
+    // HOME
+    v.lessons = this.lessons().map(l => {
+      const p = S.progress[l.id]; const done = !!(p && p.done);
+      const color = l.accent === 'red' ? '#C4453B' : '#2C4CA8';
+      return {
+        num: l.num, title: l.title, subtitle: l.subtitle, barColor: color,
+        ringW: done ? (p.best + '%') : '0%',
+        statusLabel: done ? ('Bestanden · ' + p.best + '%') : 'Noch nicht begonnen',
+        btnLabel: done ? 'Wiederholen' : 'Starten',
+        start: () => this.startLesson(l.id), flash: () => this.openFlash(l.id)
+      };
+    });
+    v.badges = ((window.FRENCH && window.FRENCH.badges) || []).map(b => {
+      const earned = S.badges.includes(b.id);
+      return {
+        title: b.title, de: b.de, mark: earned ? '★' : '?',
+        iconBg: earned ? '#C9A227' : '#EFEBE0', iconColor: earned ? '#fff' : '#7C734F',
+        titleColor: earned ? '#1B2A4A' : '#7C734F',
+        style: { display: 'flex', alignItems: 'center', gap: '12px', background: earned ? '#FCF6E4' : '#fff', border: '1.5px solid ' + (earned ? '#EAD89A' : '#ECE5D8'), borderRadius: '16px', padding: '14px 16px' }
+      };
+    });
+
+    // LESSON
+    if (S.screen === 'lesson' && S.session) {
+      const ss = S.session; const cq = ss.qs[ss.qIndex];
+      const answered = ss.qIndex + (cq.locked ? 1 : 0);
+      v.progressW = Math.round(answered / ss.qs.length * 100) + '%';
+      v.qLabel = 'Frage ' + (ss.qIndex + 1) + ' von ' + ss.qs.length;
+      v.streakNow = ss.streak;
+      v.streakBg = ss.streak >= 3 ? '#FBEAE8' : '#F1EEE5';
+      v.streakColor = ss.streak >= 3 ? '#C4453B' : '#645F57';
+      v.exit = () => this.setState({ screen: 'home' });
+
+      const OPT = { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px', width: '100%', textAlign: 'left', padding: '16px 20px', borderRadius: '14px', border: '1.5px solid #E5DFD3', background: '#fff', color: '#1B2A4A', font: '600 16.5px/1.3 Mulish, sans-serif', cursor: 'pointer', transition: 'border-color .15s ease, background-color .15s ease, color .15s ease, transform .15s cubic-bezier(.23,1,.32,1)' };
+      const q = {
+        isMC: cq.kind === 'mc', isType: cq.kind === 'type', isMemory: cq.kind === 'memory',
+        prompt: cq.prompt, hasSub: !!cq.sub, sub: cq.sub || '',
+        hasAudio: !!cq.audio, hasImage: !!cq.image, image: cq.image || '',
+        hasSpeak: !!cq.speak && !cq.audio, locked: cq.locked,
+        playAudio: () => this.speak(cq.audio), playSpeak: () => this.speak(cq.speak),
+        showFeedback: cq.locked,
+        next: () => this.next(),
+        nextLabel: ss.qIndex < ss.qs.length - 1 ? 'Weiter' : 'Zur Auswertung'
+      };
+      if (cq.kind === 'mc') {
+        q.options = cq.order.map(ch => {
+          const isSel = cq.selected === ch, isAns = ch === cq.answer; let st = Object.assign({}, OPT); let hover = HOVER_CARD;
+          if (cq.locked) {
+            hover = {};
+            if (isAns) st = Object.assign(st, { borderColor: '#2E8B57', background: '#EAF4EE', color: '#1f6b43', cursor: 'default' });
+            else if (isSel) st = Object.assign(st, { borderColor: '#C4453B', background: '#FBEAE8', color: '#a8332b', cursor: 'default' });
+            else st = Object.assign(st, { opacity: .5, cursor: 'default' });
+          }
+          return { text: ch, mark: cq.locked ? (isAns ? '✓' : (isSel ? '✗' : '')) : '', style: st, hover, onClick: () => this.answerMC(ch) };
+        });
+      }
+      if (cq.kind === 'type') {
+        const base = { width: '100%', padding: '16px 18px', borderRadius: '14px', border: '1.5px solid #E5DFD3', background: '#fff', color: '#1B2A4A', font: '600 18px/1.2 Mulish, sans-serif' };
+        let ist = base;
+        if (cq.locked) ist = Object.assign({}, base, cq.correct ? { borderColor: '#2E8B57', background: '#EAF4EE' } : { borderColor: '#C4453B', background: '#FBEAE8' });
+        q.input = cq.input; q.locked = cq.locked;
+        q.onType = (e) => this.setInput(e.target.value);
+        q.onKey = (e) => { if (e.key === 'Enter') this.submitType(); };
+        q.submit = () => this.submitType(); q.showSubmit = !cq.locked;
+        q.inputStyle = ist; q.showHint = !cq.locked && this.props.showHints !== false && !!cq.hint; q.hint = cq.hint || '';
+      }
+      if (cq.kind === 'memory') {
+        const TB = { display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '66px', padding: '8px', borderRadius: '14px', border: '1.5px solid #E5DFD3', background: '#fff', color: '#1B2A4A', font: '700 16px/1.15 Mulish, sans-serif', cursor: 'pointer', transition: 'border-color .15s ease, background-color .15s ease, color .15s ease, transform .15s cubic-bezier(.23,1,.32,1)' };
+        q.tiles = cq.tiles.map(t => {
+          let st = Object.assign({}, TB);
+          if (t.matched) st = Object.assign(st, { borderColor: '#2E8B57', background: '#EAF4EE', color: '#1f6b43', cursor: 'default', opacity: .75 });
+          else if (t.sel) st = Object.assign(st, { borderColor: '#2C4CA8', background: '#EEF2FC', transform: 'scale(1.04)' });
+          return { label: t.label, style: st, onClick: () => this.selectTile(t.idx) };
+        });
+      }
+      // feedback styling
+      const good = cq.correct;
+      q.fbColor = good ? '#2E8B57' : '#C4453B';
+      q.fbTitle = good ? this.praise() : 'Pas tout à fait…';
+      q.fbText = good ? '' : ('Richtig: « ' + cq.answer + ' »');
+      q.hasFbText = !good;
+      q.fbStyle = { display: 'flex', alignItems: 'center', gap: '16px', marginTop: '16px', padding: '18px 22px', borderRadius: '18px', background: good ? '#EAF4EE' : '#FBEAE8', border: '1.5px solid ' + (good ? '#BFE0CB' : '#F2CFC9'), animation: 'fadeUp .25s ease both' };
+      v.q = q;
+    }
+
+    // RESULT
+    if (S.screen === 'result' && S.result) {
+      const r = S.result;
+      let tag, msg, sub;
+      if (r.pct === 100) { tag = 'Sans faute'; msg = 'Parfait !'; sub = 'Alles richtig – das war makellos. Margot ist beeindruckt!'; }
+      else if (r.pct >= 70) { tag = 'Très bien'; msg = 'Super gemacht!'; sub = 'Starke Leistung. Wiederhole die kniffligen Stellen und du bist perfekt.'; }
+      else { tag = 'Continue'; msg = 'Gut dabei!'; sub = 'Jeder Anfang zählt. Übe die Lektion nochmal – es wird jedes Mal leichter.'; }
+      v.result = {
+        tag, message: msg, sub,
+        pct: r.pct + '%', score: r.correct + '/' + r.total, maxStreak: r.maxStreak,
+        hasNew: r.newList.length > 0,
+        newBadges: r.newList.map(b => ({ title: b.title, de: b.de })),
+        retry: () => r.isReview ? this.startReview() : this.startLesson(r.lessonId),
+        home: () => this.setState({ screen: 'home' })
+      };
+    }
+
+    // FLASH
+    if (S.screen === 'flash' && S.flash) {
+      const f = S.flash; const c = f.cards[f.idx];
+      v.flash = {
+        title: f.title, idx: f.idx + 1, total: f.cards.length,
+        faceLabel: f.flipped ? 'Deutsch' : 'Français',
+        face: f.flipped ? c.de : c.fr,
+        faceLang: f.flipped ? 'de' : 'fr',
+        faceColor: f.flipped ? '#1B2A4A' : '#2C4CA8',
+        flip: () => this.flipCard(),
+        onKey: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.flipCard(); } },
+        prev: () => this.flashNav(-1), next: () => this.flashNav(1),
+        speak: () => this.speak(c.fr), home: () => this.setState({ screen: 'home' })
+      };
+    }
+    return v;
+  }
+}
+</script>
+</body>
+</html>
